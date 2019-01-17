@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Title</title>
+    <script src="/static/echarts.common.min.js"></script>
+    <script src="/static/echarts-wordcloud.js"></script>
+    <link rel="stylesheet" href="/static/pure-css/pure-min.css">
+</head>
+<body>
+<div class="pure-g">
+    <div class="pure-u-1-3">
+         <p>转发博主Top10</p>
+        <table class="pure-table">
+            <thead>
+            <tr>
+                <th>#</th>
+                <th>转发博主名称</th>
+                <th>转发数量</th>
+            </tr>
+            </thead>
+
+            <tbody>
+            {% for usr in usrs %}
+                {% if usr.id|divisibleby:2 %}
+                    <tr class="pure-table-odd">
+                 {% else %}
+                    <tr>
+                {% endif %}
+                        <td>{{ usr.id }}</td>
+                        <td>{{ usr.text }}</td>
+                        <td>{{ usr.value }}</td>
+
+                </tr>
+            {% endfor %}
+
+            </tbody>
+        </table>
+    </div>
+
+    <div class="pure-u-1-3">
+         <p>发博日期Top10</p>
+        <table class="pure-table">
+            <thead>
+            <tr>
+                <th>#</th>
+                <th>发博日期</th>
+                <th>发博数量</th>
+            </tr>
+            </thead>
+
+            <tbody>
+            {% for date in dates %}
+               {% if date.id|divisibleby:2 %}
+                    <tr class="pure-table-odd">
+                 {% else %}
+                    <tr>
+                {% endif %}
+                    <td>{{ date.id }}</td>
+                    <td>{{ date.text }}</td>
+                    <td>{{ date.value }}</td>
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+
+    </div>
+
+    <div class="pure-u-1-3">
+        <p>关键词Top10</p>
+        <table class="pure-table">
+            <thead>
+            <tr>
+                <th>#</th>
+                <th>关键词</th>
+                <th>出现次数</th>
+            </tr>
+            </thead>
+
+            <tbody>
+            {% for word in words10 %}
+                {% if word.id|divisibleby:2 %}
+                    <tr class="pure-table-odd">
+                 {% else %}
+                    <tr>
+                {% endif %}
+                    <td>{{ word.id }}</td>
+                    <td>{{ word.text }}</td>
+                    <td>{{ word.value }}</td>
+                </tr>
+            {% endfor %}
+
+            </tbody>
+        </table>
+
+    </div>
+</div>
+
+<div class="panel panel-default">
+     <p style="text-align: center;font-size: 24px">关键词词云</p>
+    <div class="panel-body" style="width: auto;height: 500px;">
+            
+        <div id="worldCloud" style="width: 100%;height: 80%"></div>
+    </div>
+</div>
+
+<div class="pure-g" >
+ <div class="pure-u-1-1">
+     <p>微博最新Top10</p>
+        <table class="pure-table">
+            <thead>
+            <tr>
+                <th>#</th>
+                <th>发博日期</th>
+                <th>内容</th>
+                <th>转发博主</th>
+                <th>转发内容</th>
+            </tr>
+            </thead>
+
+            <tbody>
+            {% for weibo in weibos %}
+                {% if weibo.id|divisibleby:2 %}
+                    <tr class="pure-table-odd">
+                 {% else %}
+                    <tr>
+                {% endif %}
+                    <td>{{ weibo.id }}</td>
+                    <td>{{ weibo.create_date }}</td>
+                    <td>{{ weibo.text }}</td>
+                    <td>{{ weibo.retweet_screen_name }}</td>
+                    <td>{{ weibo.retweet_text }}</td>
+                </tr>
+            {% endfor %}
+
+            </tbody>
+        </table>
+
+    </div>
+</div>
+
+
+
+
+<script type="text/javascript">
+
+
+    var worldCloudcharts = echarts.init(document.getElementById('worldCloud'));
+    var worldCloudoption = {
+        title: {
+            text: '微博关键词',
+            x: 'center',
+            textStyle: {
+                fontSize: 40,
+                color: '#FFFFFF'
+            }
+
+        },
+        tooltip: {
+            show: true
+        },
+        series: [{
+            name: '微博关键词',
+            type: 'wordCloud',
+            sizeRange: [16, 80],
+            rotationRange: [-45, 90],
+            textPadding: 0,
+            autoSize: {
+                enable: true,
+                minSize: 12
+            },
+            textStyle: {
+                normal: {
+                    color: function () {
+                        return 'rgb(' + [
+                            Math.round(Math.random() * 160),
+                            Math.round(Math.random() * 160),
+                            Math.round(Math.random() * 160)
+                        ].join(',') + ')';
+                    }
+                },
+                emphasis: {
+                    shadowBlur: 10,
+                    shadowColor: '#333'
+                }
+            },
+            data: [{
+                name: "Jayfee",
+                value: 666
+            }, {
+                name: "Nancy",
+                value: 520
+            }]
+        }]
+    };
+
+    worldCloudoption.series[0].data = {{ words | safe }}
+
+        worldCloudcharts.setOption(worldCloudoption);
+</script>
+</body>
+</html>
